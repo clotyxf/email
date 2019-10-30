@@ -14,7 +14,7 @@
         "psr/log": "^1.0",
         "symfony/var-dumper": "^4.3",
         "egulias/email-validator": "^2.1",
-        "swiftmailer/swiftmailer": "^6.0",
+        "swiftmailer/swiftmailer": "~6.2.1",
         "qiniu/php-sdk": "^7.2"
     },
     "require-dev": {
@@ -23,7 +23,10 @@
         "squizlabs/php_codesniffer": "^2.9 || ^3.2"
     },
     "autoload": {
-        "files": ["src/Helpers/functions.php"],
+        "files": [
+            "src/Helpers/functions.php",
+            "src/Overwrite/autoload.php"
+        ],
         "psr-4": {
             "Email\\": "src"
         }
