@@ -55,26 +55,29 @@ class PlatformManager
         }
 
         if ($name == 'default') {
-            if (
-                empty($config['imap_config'])
-                || empty($config['imap_config']['host'])
-                || empty($config['imap_config']['encryption'])
-                || empty($config['imap_config']['port'])
-            ) {
-                throw new InvalidArgumentException("imap配置错误");
-            }
-
-            if (
-                empty($config['smtp_config'])
-                || empty($config['smtp_config']['host'])
-                || empty($config['smtp_config']['encryption'])
-                || empty($config['smtp_config']['port'])
-            ) {
+            if (empty($config['imap_config']) && empty($config['smtp_config'])) {
                 throw new InvalidArgumentException("smtp配置错误");
             }
 
-            $imapHost = '{' . $config['imap_config']['host'] . ':' . $config['imap_config']['port'] . '/imap/' . $config['imap_config']['encryption'] . '}';
-            $platform = $platform->setImapHost($imapHost)->setSmtpConf($config['smtp_config']);
+            if (
+                !empty($config['imap_config'])
+                && !empty($config['imap_config']['host'])
+                && !empty($config['imap_config']['encryption'])
+                && !empty($config['imap_config']['port'])
+            ) {
+                $imapHost = '{' . $config['imap_config']['host'] . ':' . $config['imap_config']['port'] . '/imap/' . $config['imap_config']['encryption'] . '}';
+                $platform = $platform->setImapHost($imapHost);
+            }
+
+            if (
+                !empty($config['smtp_config'])
+                && !empty($config['smtp_config']['host'])
+                && !empty($config['smtp_config']['encryption'])
+                && !empty($config['smtp_config']['port'])
+            ) {
+                $platform = $platform->setSmtpConf($config['smtp_config']);
+            }
+            
         }
 
         return $platform;
