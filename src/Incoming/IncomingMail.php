@@ -263,10 +263,10 @@ class IncomingMail
     {
         if (is_null($this->attachmentParser)) {
             $this->attachmentParser = new AttachmentParser($this->config);
+        }
 
-            if ($this->attachmentParser->getDriverName() == 'null') {
-                return;
-            }
+        if ($this->attachmentParser->getDriverName() == 'null') {
+            return;
         }
 
         if ('RFC822' == $structure->subtype && isset($structure->disposition) && $structure->disposition == 'attachment') {
