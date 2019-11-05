@@ -76,7 +76,7 @@ class Mailer
             $platform = 'default';
         }
 
-        if ($platform === 'default' && (empty($config['imap_config']) || empty($config['smtp_config']))) {
+        if ($platform === 'default' && empty($config['smtp_config'])) {
             if (!is_null($autoPlatform = $parser->recogation($username))) {
                 $platform = $autoPlatform;
             }
