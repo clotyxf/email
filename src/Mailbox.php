@@ -62,7 +62,10 @@ class Mailbox
      * @var array
      */
     protected $timeouts = [
-        IMAP_OPENTIMEOUT => 30
+        IMAP_OPENTIMEOUT => 10,
+        IMAP_READTIMEOUT => 120,
+        IMAP_WRITETIMEOUT => 120,
+        IMAP_CLOSETIMEOUT => 10
     ];
 
     /**
