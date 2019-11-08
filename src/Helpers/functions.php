@@ -38,7 +38,7 @@ if (! function_exists('cc_validator')) {
                 } else {
                     $vals[] = $cc['email'];
                 }
-            } elseif (!is_array($cc) && email_validator($cc['email'])) {
+            } elseif (!is_array($cc) && email_validator($cc)) {
                 $vals[] = $cc;
             }
         }
