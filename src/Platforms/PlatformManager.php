@@ -62,7 +62,14 @@ class PlatformManager
                 && !empty($config['imap_config']['encryption'])
                 && !empty($config['imap_config']['port'])
             ) {
-                $imapHost = '{' . $config['imap_config']['host'] . ':' . $config['imap_config']['port'] . '/imap/' . $config['imap_config']['encryption'] . '}';
+                $imapHost = '{' . $config['imap_config']['host'] . ':' . $config['imap_config']['port'] . '/imap';
+                
+                if (isset($config['imap_config']['validate_cert']) && empty($config['imap_config']['validate_cert'])) {
+                    $imapHost .= '/novalidate-cert';
+                }
+
+                $imapHost .= '/' . $config['imap_config']['encryption'] . '}';
+
                 $platform = $platform->setImapHost($imapHost);
                 $imapConfig = true;
             }
