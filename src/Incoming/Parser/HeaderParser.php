@@ -167,15 +167,50 @@ class HeaderParser implements ParserFactory
      */
     private function setHeaderSendDate(stdClass $headClass)
     {
+        $dateString = null;
+        
         if (property_exists($headClass, 'date')) {
-            $this->date = date('Y-m-d H:i:s', strtotime($headClass->date));
+            $dateString = $headClass->date;
+        } elseif (property_exists($headClass, 'Date')) {
+            $dateString = $headClass->Date;
         }
-
-        if (property_exists($headClass, 'Date')) {
-            $this->date = date('Y-m-d H:i:s', strtotime($headClass->Date));
+        
+        if ($dateString) {
+            $this->date = $this->parseDateWithTimezone($dateString);
         }
 
         return $this;
+    }
+
+    /**
+     * 解析包含时区的日期字符串
+     * 支持 RFC 822 格式，如 "Wed, 02 Jul 2025 08:23:19 +0800 (GMT+08:00)"
+     * 对于带正时区偏移的时间，进行时区补偿（增加对应小时数）
+     * 
+     * @param string $dateString 日期字符串
+     * @return string|null 格式化后的时间字符串 Y-m-d H:i:s
+     */
+    private function parseDateWithTimezone(string $dateString)
+    {
+        try {
+            // 使用 DateTime 解析日期（原生支持 RFC 822 格式的时区偏移）
+            $dateTime = new \DateTime($dateString);
+            
+            // 获取时区偏移（秒数）
+            $offset = $dateTime->getOffset();
+            
+            // 如果时区偏移为正（正时区，如 +0800），进行时间补偿
+            if ($offset > 0) {
+                $hours = (int)($offset / 3600);
+                $dateTime->add(new \DateInterval('PT' . $hours . 'H'));
+            }
+            
+            return $dateTime->format('Y-m-d H:i:s');
+        } catch (\Exception $e) {
+            // 降级处理：使用 strtotime 兼容其他格式
+            $timestamp = strtotime($dateString);
+            return ($timestamp !== false) ? date('Y-m-d H:i:s', $timestamp) : null;
+        }
     }
 
     /**

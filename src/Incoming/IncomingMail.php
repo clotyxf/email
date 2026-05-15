@@ -116,7 +116,7 @@ class IncomingMail
                 }
 
                 foreach ($data['body'] as $bodyKey => $body) {
-                    preg_match('/([^"][\w:]+?' . $attachment['id'] . ')/', $body['body'], $result);
+                    preg_match('/([^"][\w:]+?' . preg_quote($attachment['id'], '/') . ')/', $body['body'], $result);
 
                     if ($result) {
                         $data['body'][$bodyKey]['body'] = str_replace($result[1], $attachment['file_path'], $body['body']);
