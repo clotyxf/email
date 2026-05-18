@@ -262,7 +262,21 @@ class Mailbox
         foreach ($this->timeouts as $type => $timeout) {
             $this->dispatch('timeout', [$type, $timeout], false);
         }
-        return $this->dispatch('open', [$this->imapHost . $this->getFolder(), $this->username, $this->password, $this->imapOptions, 0, []], false);
+        $folder = $this->getFolder();
+
+        if (strpos($this->imapHost, '163.com') > 0) {
+            if ($folder == 'Junk') {
+                $folder = '&V4NXPpCuTvY-';
+            } elseif ($folder == 'Drafts') {
+                $folder = '&g0l6P3ux-';
+            } elseif ($folder == 'Sent Items') {
+                $folder = '&XfJT0ZAB-';
+            } elseif ($folder == 'Deleted Items') {
+                $folder = '&XfJSIJZk-';
+            }
+        }
+
+        return $this->dispatch('open', [$this->imapHost . $folder, $this->username, $this->password, $this->imapOptions, 0, []], false);
     }
 
     /**
