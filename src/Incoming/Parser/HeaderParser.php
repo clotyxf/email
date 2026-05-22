@@ -100,7 +100,6 @@ class HeaderParser implements ParserFactory
     {
         $this->decoder   = $decoder;
         $headClass       = $this->parser($headers);
-        $this->headClass = $headClass;
         
         // $priority = preg_match("/Priority\:(.*)/i", $headers, $matches) ? trim($matches[1]) : '';
         // $importance = preg_match("/Importance\:(.*)/i", $headers, $matches) ? trim($matches[1]) : '';
@@ -193,18 +192,21 @@ class HeaderParser implements ParserFactory
     private function parseDateWithTimezone(string $dateString)
     {
         try {
+            // 检测原始字符串是否包含时区偏移信息（如 +0800、-0700），需在清洗前检测
+            $hasTimezone = (bool) preg_match('/[+-]\d{4}(\s|$|\()/', $dateString);
+
+            // 剥离括号内的附加时区名，如 "(GMT+08:00)"、"(CST)"，DateTime 无法解析它们
+            $cleanDateString = trim(preg_replace('/\s*\(.*?\)/', '', $dateString));
+
             // 使用 DateTime 解析日期（原生支持 RFC 822 格式的时区偏移）
-            $dateTime = new \DateTime($dateString);
-            
-            // 获取时区偏移（秒数）
-            $offset = $dateTime->getOffset();
-            
-            // 如果时区偏移为正（正时区，如 +0800），进行时间补偿
-            if ($offset > 0) {
-                $hours = (int)($offset / 3600);
-                $dateTime->add(new \DateInterval('PT' . $hours . 'H'));
+            $dateTime = new \DateTime($cleanDateString);
+
+            if ($hasTimezone) {
+                // 有明确时区偏移时，统一转换为上海时区
+                $dateTime->setTimezone(new \DateTimeZone('Asia/Shanghai'));
             }
-            
+            // 无时区信息时，直接使用字符串中的时间，不做偏移补偿
+
             return $dateTime->format('Y-m-d H:i:s');
         } catch (\Exception $e) {
             // 降级处理：使用 strtotime 兼容其他格式
