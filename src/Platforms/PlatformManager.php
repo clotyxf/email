@@ -67,7 +67,7 @@ class PlatformManager
                 if (isset($config['imap_config']['validate_cert']) && empty($config['imap_config']['validate_cert'])) {
                     $imapHost .= '/novalidate-cert';
                 }
-
+ 
                 $imapHost .= '/' . $config['imap_config']['encryption'] . '}';
 
                 $platform = $platform->setImapHost($imapHost);
