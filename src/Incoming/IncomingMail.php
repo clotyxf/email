@@ -171,6 +171,10 @@ class IncomingMail
      */
     private function initBodyRequest($structure, $partNum, $markAsSeen = true, $emlParse = false)
     {
+        if (!isset($structure->subtype)) {
+            return;
+        }
+
         $options = $this->mailbox->getSearchOption();
 
         if (!$markAsSeen) {

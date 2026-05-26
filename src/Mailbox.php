@@ -359,7 +359,11 @@ class Mailbox
         }
 
         if (in_array('body', $only)) {
-            $incomingMail->setMailBodys($this->dispatch('fetchstructure', [$mailId, $this->getSearchOption()]));
+            $body = $this->dispatch('fetchstructure', [$mailId, $this->getSearchOption()]);
+
+            if (!is_bool($body)) {
+                $incomingMail->setMailBodys($body);
+            }
         }
     
         return $incomingMail;
