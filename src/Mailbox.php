@@ -468,6 +468,16 @@ class Mailbox
     }
 
     /**
+     * 获取文件夹列表
+     * 
+     * @return stdClass
+     */
+    public function getListFolders()
+    {
+        return $this->dispatch('list', [$this->imapHost, "*"]);
+    }
+
+    /**
      * 返回账号信息
      * 
      * @return array
