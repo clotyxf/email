@@ -61,6 +61,13 @@ class BodyParser
             $data = $this->decoder->convertStringEncoding($data, 'utf-8', $this->config->get('encode'));
         }
 
+        if (
+            (stripos($data, "Received: from") === 0 && stripos($data, 'with ESMTP') !== false)
+            || (stripos($data, "Final-Recipient:") !== false && stripos($data, 'Remote-MTA') !== false)
+        ) {
+            return;
+        }
+
         $this->partBody[] = [
             'part' => $this->part,
             'body' => $data
